@@ -1,4 +1,5 @@
 import pygame,sys
+# '''
 class Button:
 	def __init__(self,text,width,height,pos,elevation):
 		#Core attributes 
@@ -15,10 +16,11 @@ class Button:
 		self.bottom_rect = pygame.Rect(pos,(width,height))
 		self.bottom_color = (150,150,150)
 		#text
-		self.text_surf = gui_font.render(text,True,(255,255,255))
+		# self.text_surf = gui_font.render(text,True,(255,255,255))
 		# self.text_rect = self.text_surf.get_rect(center = self.top_rect.center)
 
 	def draw(self):
+
 		# elevation logic 
 		self.top_rect.y = self.original_y_pos - self.dynamic_elecation
 		# self.text_rect.center = self.top_rect.center 
@@ -46,7 +48,7 @@ class Button:
 		else:
 			self.dynamic_elecation = self.elevation
 			self.top_color = (250,150,150)
-
+# '''
 WIDTH, HEIGHT = 1280,720
 BG = (255,255,255)
 BLACK=(0,0,0)
@@ -54,7 +56,7 @@ clock = pygame.time.Clock()
 
 FPS=60
 screen = pygame.display.set_mode((WIDTH,HEIGHT))
-gui_font = pygame.font.SysFont('rockwell',30)
+# gui_font = pygame.font.SysFont('rockwell',30)
 
 button1 = Button('Click me',200,40,(200,250),5)
 # BACK=
@@ -68,20 +70,16 @@ button1 = Button('Click me',200,40,(200,250),5)
 def main():
     running = True
     screen.fill(BG)
-
+    screen.fill((255,255,255))
     while running:
-        clock.tick(0)
-        
+        clock.tick(60)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running=False
-
-        screen.fill((0,0,0))
-		button1.draw()
-		pygame.display.update()
-		clock.tick(60)
-		
-		# draw()
-	pygame.quit()
+        # draw()
+        
+        button1.draw()
+        pygame.display.update()
+    pygame.quit()
 
 main()
