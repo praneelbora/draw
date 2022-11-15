@@ -5,17 +5,17 @@ import colors
 pygame.init()
 
 class Rectangle:
-    '''Class for creating rectangles
-    with border radius throughout program'''
-    def __init__(self,width,height,pos,bgcolor):  #creating class button and listing arguments
-        #top rectangle
-        self.top_rect = pygame.Rect(pos,(width,height))
-        self.top_color = (bgcolor)     
+	'''Class for creating rectangles
+	with border radius throughout program'''
+	def __init__(self,width,height,pos,bgcolor):  #creating class button and listing arguments
+		#top rectangle
+		self.top_rect = pygame.Rect(pos,(width,height))
+		self.top_color = (bgcolor)     
 
-    def draw(self):
-        '''draw function of class button'''
-        # pygame.draw.rect(screen,self.top_color,self.top_rect,border_radius = 20)
-        pygame.draw.rect(screen,self.top_color,self.top_rect,border_radius= 0)
+	def draw(self):
+		'''draw function of class button'''
+		# pygame.draw.rect(screen,self.top_color,self.top_rect,border_radius = 20)
+		pygame.draw.rect(screen,self.top_color,self.top_rect,border_radius= 0)
 
 
 class Button:
@@ -72,7 +72,7 @@ BG = (255,255,255)
 BLACK=(0,0,0)
 clock = pygame.time.Clock()
 
-FPS=60
+FPS=6000000000
 screen = pygame.display.set_mode((WIDTH,HEIGHT))
 gui_font = pygame.font.SysFont('rockwell',30)
 
@@ -91,28 +91,43 @@ surf = screen.subsurface((49, 49, 902, 632))
 Img = pygame.image.load('Draw!.png')
 
 def main():
-    running = True
-    screen.fill(colors.background)
-    while running:
-        clock.tick(60)
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running=False
-        # draw()
-        pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
-        button1.draw()
-        button2.draw()
-        button3.draw()
-        button4.draw()
-        button5.draw()
-        button6.draw()
-        rectangle1.draw()
-        screen.blit(Img, (1060,570))
+	running = True
+	screen.fill(colors.background)
+	drawing = False
+	counter = 0
+	thickness = 10
+	rectangle1.draw()
+	pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
+	buttons = [button1,button2,button3,button4,button5,button6]
+	while running:
+		clock.tick(FPS)
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				running=False
+			if event.type == pygame.MOUSEMOTION:
+				if (drawing==True):
+					for i in range(100):
+						# surf.set_at((pygame.mouse.get_pos()[0]-49,pygame.mouse.get_pos()[1]-49), BLACK)
+						# surf.fill(BLACK, ((pygame.mouse.get_pos()[0]-49,pygame.mouse.get_pos()[1]-49), (thickness/2,thickness/2)))
+						pygame.draw.circle(surf, BLACK, (pygame.mouse.get_pos()[0]-49,pygame.mouse.get_pos()[1]-49), thickness/2, 0)
+						print(106)
+						if (counter==1):
+							pygame.draw.line(surf,BLACK,position,(pygame.mouse.get_pos()[0]-49,pygame.mouse.get_pos()[1]-49),thickness)
+						counter = 1
+						position = (pygame.mouse.get_pos()[0]-49,pygame.mouse.get_pos()[1]-49)
+			elif event.type == pygame.MOUSEBUTTONUP:
+				counter = 0
+				drawing = False
+			elif event.type == pygame.MOUSEBUTTONDOWN:
+				drawing = True
+		for button in buttons:
+			button.draw()
+		screen.blit(Img, (1060,570))
 
 
 
-        pygame.display.update()
-    pygame.image.save(surf,"surface.png")
-    pygame.quit()
+		pygame.display.update()
+	pygame.image.save(surf,"surface.png")
+	pygame.quit()
 
 main()
