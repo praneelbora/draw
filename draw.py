@@ -7,14 +7,15 @@ pygame.init()
 class Rectangle:
     '''Class for creating rectangles
     with border radius throughout program'''
-    def __init__(self,width,height,pos ,bgcolor):  #creating class button and listing arguments
+    def __init__(self,width,height,pos,bgcolor):  #creating class button and listing arguments
         #top rectangle
         self.top_rect = pygame.Rect(pos,(width,height))
         self.top_color = (bgcolor)     
 
     def draw(self):
         '''draw function of class button'''
-        pygame.draw.rect(screen,self.top_color,self.top_rect,border_radius = 20)
+        # pygame.draw.rect(screen,self.top_color,self.top_rect,border_radius = 20)
+        pygame.draw.rect(screen,self.top_color,self.top_rect,border_radius= 0)
 
 
 class Button:
@@ -85,6 +86,8 @@ button6 = Button('Redo',100,60,(1120,470),5)
 
 #rectangles
 rectangle1 = Rectangle(900, 630, (50, 50), colors.white)
+# surf = pygame.Surface(900, 630)
+surf = screen.subsurface((49, 49, 902, 632))
 Img = pygame.image.load('Draw!.png')
 
 def main():
@@ -96,7 +99,7 @@ def main():
             if event.type == pygame.QUIT:
                 running=False
         # draw()
-        
+        pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
         button1.draw()
         button2.draw()
         button3.draw()
@@ -109,6 +112,7 @@ def main():
 
 
         pygame.display.update()
+    pygame.image.save(surf,"surface.png")
     pygame.quit()
 
 main()
