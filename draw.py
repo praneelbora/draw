@@ -72,7 +72,7 @@ BG = (255,255,255)
 BLACK=(0,0,0)
 clock = pygame.time.Clock()
 
-FPS=6000000000
+FPS=60000
 screen = pygame.display.set_mode((WIDTH,HEIGHT))
 gui_font = pygame.font.SysFont('rockwell',30)
 
@@ -94,11 +94,12 @@ def main():
 	running = True
 	screen.fill(colors.background)
 	drawing = False
-	counter = 0
 	thickness = 10
 	rectangle1.draw()
 	pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
+	counter = 0
 	buttons = [button1,button2,button3,button4,button5,button6]
+	graph = [[0 for i in range(WIDTH)] for j in range(HEIGHT)]
 	while running:
 		clock.tick(FPS)
 		for event in pygame.event.get():
@@ -106,15 +107,21 @@ def main():
 				running=False
 			if event.type == pygame.MOUSEMOTION:
 				if (drawing==True):
-					for i in range(100):
-						# surf.set_at((pygame.mouse.get_pos()[0]-49,pygame.mouse.get_pos()[1]-49), BLACK)
-						# surf.fill(BLACK, ((pygame.mouse.get_pos()[0]-49,pygame.mouse.get_pos()[1]-49), (thickness/2,thickness/2)))
-						pygame.draw.circle(surf, BLACK, (pygame.mouse.get_pos()[0]-49,pygame.mouse.get_pos()[1]-49), thickness/2, 0)
-						print(106)
-						if (counter==1):
-							pygame.draw.line(surf,BLACK,position,(pygame.mouse.get_pos()[0]-49,pygame.mouse.get_pos()[1]-49),thickness)
-						counter = 1
-						position = (pygame.mouse.get_pos()[0]-49,pygame.mouse.get_pos()[1]-49)
+					graph[pygame.mouse.get_pos()[1]][pygame.mouse.get_pos()[0]] = 1
+					for j in range(HEIGHT):
+						for i in range(WIDTH):
+							if graph[j][i] == 1:
+								surf.set_at((i-49,j-49), BLACK)
+					# surf.fill(BLACK, ((pygame.mouse.get_pos()[0]-49,pygame.mouse.get_pos()[1]-49), (thickness/2,thickness/2)))
+					# pygame.draw.circle(surf, BLACK, (pygame.mouse.get_pos()[0]-49,pygame.mouse.get_pos()[1]-49), thickness/2, 0)
+					# print(106)
+					# if (counter==1):
+					# 	pygame.draw.line(surf,BLACK,position,(pygame.mouse.get_pos()[0]-49,pygame.mouse.get_pos()[1]-49),thickness)
+					
+					counter = 1
+					posx = pygame.mouse.get_pos()[0]
+					posy = pygame.mouse.get_pos()[1]
+					# position = (pygame.mouse.get_pos()[0]-49,pygame.mouse.get_pos()[1]-49)
 			elif event.type == pygame.MOUSEBUTTONUP:
 				counter = 0
 				drawing = False
@@ -128,6 +135,10 @@ def main():
 
 		pygame.display.update()
 	pygame.image.save(surf,"surface.png")
+	for j in range(HEIGHT):
+						for i in range(WIDTH):
+							if graph[j][i] == 1:
+								print(i,j)
 	pygame.quit()
 
 main()
