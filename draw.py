@@ -119,47 +119,46 @@ def main():
 						y_diff=pos1[1]-pos_prev[1]
 						signx=1 if x_diff>=0 else -1
 						signy=1 if y_diff>=0 else -1
-						# if(y_diff*x_diff<0)
-						# y_diff+1=3
-						# x_diff+1=10
-						# 3
-
 						
+						x_lines=abs(x_diff)+1
+						y_lines=abs(y_diff)+1
+						if(x_lines>=y_lines):# and signx==signy==1):
+							x_lines-=2
+							startx=pos_prev[0]
+							starty=pos_prev[1]
+							x_pixels=int(x_lines/y_lines) if(y_lines!=0) else x_lines
+							for i in range(y_lines):
+								for j in range(x_pixels):
+									graph[starty+i*signy][startx+j*signx]=1
+									surf.set_at((startx+j*signx-49,starty+i*signy-49), BLACK)
+								startx+=x_pixels*signx
+								'''
+								for the points left by the program in case seom a re left in case like 10/3 thrice will cause 1 element to be left
+								'''
+							# for i in range(x_lines-y_lines*x_pixels):
+							# 	graph[pos1[1]][startx+i*signx]
+							# 	surf.set_at((startx+i*signx-49,pos1[1]-49), BLACK)
+								
+						if(x_lines<y_lines):# and signx==signy==1):
+							y_lines-=2
+							startx=pos_prev[0]
+							starty=pos_prev[1]
+							y_pixels=int(y_lines/x_lines) if(x_lines!=0) else y_lines
+							for i in range(x_lines):
+								for j in range(y_pixels):
+									graph[starty+j*signy][startx+i*signx]=1
+									surf.set_at((startx+i*signx-49,starty+j*signy-49), BLACK)
+								starty+=y_pixels*signy
+						# for i in range(y_lines-x_lines*y_pixels):
+						# 		graph[starty+i*signy][pos1[0]]
+						# 		surf.set_at((pos1[0]-49,starty+i*signy-49), BLACK)
 
-						if((x_diff)>=(y_diff)):
-							last_x=0
-							
-							for i in range(0,y_diff+signy,signy):
-
-								for j in range(0,int((x_diff+signx)/(y_diff+signy)),signx):
-
-									graph[pos_prev[1]+i][last_x+pos_prev[0]+j]=1
-
-									surf.set_at((last_x+pos_prev[0]+j-49,pos_prev[1]+i-49), BLACK)
-								last_x+=int((x_diff+signx)/(y_diff+signy))
-						else:
-							last_y=0
-							for i in range(0,x_diff+signx,signx):
-								for j in range(0,int((y_diff+signy)/(x_diff+signx)),signy):
-									graph[last_y+pos_prev[1]+j][pos_prev[0]+i]=1
-									surf.set_at((pos_prev[0]+i-49,last_y+pos_prev[1]+j-49), BLACK)
-								last_y+=int((y_diff+signy)/(x_diff+signx))
-							
-					# surf.fill(BLACK, ((pygame.mouse.get_pos()[0]-49,pygame.mouse.get_pos()[1]-49), (thickness/2,thickness/2)))
-					# pygame.draw.circle(surf, BLACK, (pygame.mouse.get_pos()[0]-49,pygame.mouse.get_pos()[1]-49), thickness/2, 0)
-					# print(106)
-					# if (counter==1):
-					# 	pygame.draw.line(surf,BLACK,position,(pygame.mouse.get_pos()[0]-49,pygame.mouse.get_pos()[1]-49),thickness)
-					
-					
 					for j in range(HEIGHT):	#plotting the drawing
 						for i in range(WIDTH):
 							if graph[j][i] == 1:
 								surf.set_at((i-49,j-49), BLACK)
 					counter = 1
 					pos_prev=temp
-					
-					# position = (pygame.mouse.get_pos()[0]-49,pygame.mouse.get_pos()[1]-49)
 			elif event.type == pygame.MOUSEBUTTONUP:
 				counter = 0
 				drawing = False
