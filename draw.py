@@ -50,7 +50,13 @@ class Button:
 		pygame.draw.rect(screen,self.top_color, self.top_rect,border_radius = 15)
 		screen.blit(self.text_surf, self.text_rect)
 		self.check_click()
-
+	def checking(self):
+		mouse_pos = pygame.mouse.get_pos()
+		if self.top_rect.collidepoint(mouse_pos):
+			if pygame.mouse.get_pressed()[0]:
+				return True
+		else:
+			return False
 	def check_click(self):
 		mouse_pos = pygame.mouse.get_pos()
 		if self.top_rect.collidepoint(mouse_pos):
@@ -58,14 +64,17 @@ class Button:
 			if pygame.mouse.get_pressed()[0]:
 				self.dynamic_elecation = 0
 				self.pressed = True
+				
 			else:
 				self.dynamic_elecation = self.elevation
 				if self.pressed == True:
-					print('click')
 					self.pressed = False
+					print("click2")
+					return True
 		else:
 			self.dynamic_elecation = self.elevation
 			self.top_color =  (3,152,158)
+			return False
 # '''
 WIDTH, HEIGHT = 1280,720
 BG = (255,255,255)
@@ -101,9 +110,10 @@ def main():
 	buttons = [button1,button2,button3,button4,button5,button6]
 	graph = [[0 for i in range(WIDTH)] for j in range(HEIGHT)]
 	
-	slope=0
 	x_diff=0
 	y_diff=0
+	draw_button=0
+
 	while running:
 		clock.tick(FPS)
 		for event in pygame.event.get():
@@ -160,10 +170,24 @@ def main():
 					counter = 1
 					pos_prev=temp
 			elif event.type == pygame.MOUSEBUTTONUP:
-				counter = 0
-				drawing = False
+				if(drawing==True and draw_button==0):
+					counter = 0
+					drawing = False
 			elif event.type == pygame.MOUSEBUTTONDOWN:
-				drawing = True
+				# print(175)
+				if button1.checking():
+					print("button1")
+					if draw_button==0 and drawing==False:
+						print("draw=0")
+						draw_button=1
+						drawing=True
+					elif draw_button==1 and drawing==True:
+						print("draw=1")
+						draw_button=0
+						drawing=False
+						counter=0
+				elif draw_button==1:
+					drawing = True
 		for button in buttons:
 			button.draw()
 		screen.blit(Img, (1060,570))
@@ -172,10 +196,10 @@ def main():
 
 		pygame.display.update()
 	pygame.image.save(surf,"surface.png")
-	for j in range(HEIGHT):
-						for i in range(WIDTH):
-							if graph[j][i] == 1:
-								print(i,j)
+	# for j in range(HEIGHT):
+	# 	for i in range(WIDTH):
+	# 		if graph[j][i] == 1:
+	# 			print(i,j)
 	pygame.quit()
 
 main()
