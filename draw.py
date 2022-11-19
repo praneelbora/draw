@@ -81,7 +81,7 @@ BG = (255,255,255)
 BLACK=(0,0,0)
 clock = pygame.time.Clock()
 
-FPS=6000000000000000
+FPS=60000
 screen = pygame.display.set_mode((WIDTH,HEIGHT))
 gui_font = pygame.font.SysFont('rockwell',30)
 
@@ -99,102 +99,68 @@ rectangle1 = Rectangle(900, 630, (50, 50), colors.white)
 surf = screen.subsurface((49, 49, 902, 632))
 Img = pygame.image.load('Draw!.png')
 
+graph = [[0 for i in range(WIDTH)] for j in range(HEIGHT)]
+
+def roundline(srf, color, start, end, radius):
+    dx = end[0]-start[0]
+    dy = end[1]-start[1]
+    distance = max(abs(dx), abs(dy))
+    for i in range(distance):
+        x = int( start[0]+float(i)/distance*dx)
+        y = int( start[1]+float(i)/distance*dy)
+        for j in range(-1*radius,radius):
+            for k in range(-1*radius,radius):
+                if (abs(j+k)<abs(2*radius-1)):
+                    graph[y+k][x+j] = 1
+                    screen.set_at((x+j, y+k), color)
 def main():
-	running = True
+	draw_on = False
+	last_pos = (0, 0)
+	color = (255, 128, 0)
+	radius = 1
+
+	# running = True
 	screen.fill(colors.background)
-	drawing = False
+	# drawing = False
 	thickness = 10
 	rectangle1.draw()
 	pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
 	counter = 0
 	buttons = [button1,button2,button3,button4,button5,button6]
-	graph = [[0 for i in range(WIDTH)] for j in range(HEIGHT)]
-	
-	x_diff=0
-	y_diff=0
-	draw_button=0
-
-	while running:
-		clock.tick(FPS)
-		for event in pygame.event.get():
-			if event.type == pygame.QUIT:
-				running=False
-			if event.type == pygame.MOUSEMOTION:
-				if (drawing==True):
-					pos1=pygame.mouse.get_pos()
-					temp=pos1
-					graph[pos1[1]][pos1[0]] = 1
-					if counter==1:
-						x_diff=pos1[0]-pos_prev[0]
-						y_diff=pos1[1]-pos_prev[1]
-						signx=1 if x_diff>=0 else -1
-						signy=1 if y_diff>=0 else -1
-						
-						x_lines=abs(x_diff)+1
-						y_lines=abs(y_diff)+1
-						if(x_lines>=y_lines):# and signx==signy==1):
-							x_lines-=2
-							startx=pos_prev[0]
-							starty=pos_prev[1]
-							x_pixels=int(x_lines/y_lines) if(y_lines!=0) else x_lines
-							for i in range(y_lines):
-								for j in range(x_pixels):
-									graph[starty+i*signy][startx+j*signx]=1
-									surf.set_at((startx+j*signx-49,starty+i*signy-49), BLACK)
-								startx+=x_pixels*signx
-								'''
-								for the points left by the program in case seom a re left in case like 10/3 thrice will cause 1 element to be left
-								'''
-							# for i in range(x_lines-y_lines*x_pixels):
-							# 	graph[pos1[1]][startx+i*signx]
-							# 	surf.set_at((startx+i*signx-49,pos1[1]-49), BLACK)
-								
-						if(x_lines<y_lines):# and signx==signy==1):
-							y_lines-=2
-							startx=pos_prev[0]
-							starty=pos_prev[1]
-							y_pixels=int(y_lines/x_lines) if(x_lines!=0) else y_lines
-							for i in range(x_lines):
-								for j in range(y_pixels):
-									graph[starty+j*signy][startx+i*signx]=1
-									surf.set_at((startx+i*signx-49,starty+j*signy-49), BLACK)
-								starty+=y_pixels*signy
-						# for i in range(y_lines-x_lines*y_pixels):
-						# 		graph[starty+i*signy][pos1[0]]
-						# 		surf.set_at((pos1[0]-49,starty+i*signy-49), BLACK)
-
-					for j in range(HEIGHT):	#plotting the drawing
-						for i in range(WIDTH):
-							if graph[j][i] == 1:
-								surf.set_at((i-49,j-49), BLACK)
-					counter = 1
-					pos_prev=temp
-			elif event.type == pygame.MOUSEBUTTONUP:
-				if(drawing==True and draw_button==0):
-					counter = 0
-					drawing = False
-			elif event.type == pygame.MOUSEBUTTONDOWN:
-				# print(175)
-				if button1.checking():
-					print("button1")
-					if draw_button==0 and drawing==False:
-						print("draw=0")
-						draw_button=1
-						drawing=True
-					elif draw_button==1 and drawing==True:
-						print("draw=1")
-						draw_button=0
-						drawing=False
-						counter=0
-				elif draw_button==1:
-					drawing = True
-		for button in buttons:
-			button.draw()
-		screen.blit(Img, (1060,570))
+	for button in buttons:
+		button.draw()
+	screen.blit(Img, (1060,570))
+	try:
+		while True:
+			e = pygame.event.wait()
+			if e.type == pygame.QUIT:
+				raise StopIteration
+			if e.type == pygame.MOUSEBUTTONDOWN:
+				color = (0, 0, 0)
+				for j in range(-1*radius,radius):
+					for k in range(-1*radius,radius):
+						if (abs(j+k)<abs(2*radius-1)):
+							graph[e.pos[1]+k][e.pos[0]+j] = 1
+							screen.set_at((e.pos[0]+j, e.pos[1]+k), color)
+				draw_on = True
+			if e.type == pygame.MOUSEBUTTONUP:
+				draw_on = False
+			if e.type == pygame.MOUSEMOTION:
+				if draw_on:
+					for j in range(-1*radius,radius):
+						for k in range(-1*radius,radius):
+							if (abs(j+k)<abs(2*radius-1)):
+								graph[e.pos[1]+k][e.pos[0]+j] = 1
+								screen.set_at((e.pos[0]+j, e.pos[1]+k), color)
+					roundline(screen, color, e.pos, last_pos, radius)
+				last_pos = e.pos
+			pygame.display.flip()
+	except StopIteration:
+		pass
 
 
 
-		pygame.display.update()
+		# pygame.display.update()
 	pygame.image.save(surf,"surface.png")
 	# for j in range(HEIGHT):
 	# 	for i in range(WIDTH):
@@ -203,3 +169,18 @@ def main():
 	pygame.quit()
 
 main()
+
+'''Button operation to be added afterwards'''
+# if button1.checking():
+# 	print("button1")
+# 	if draw_button==0 and drawing==False:
+# 		print("draw=0")
+# 		draw_button=1
+# 		drawing=True
+# 	elif draw_button==1 and drawing==True:
+# 		print("draw=1")
+# 		draw_button=0
+# 		drawing=False
+# 		counter=0
+# elif draw_button==1:
+# 	drawing = True
