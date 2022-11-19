@@ -112,12 +112,12 @@ def roundline(srf, color, start, end, radius):
             for k in range(-1*radius,radius):
                 if (abs(j+k)<abs(2*radius-1)):
                     graph[y+k][x+j] = 1
-                    screen.set_at((x+j, y+k), color)
+                    srf.set_at((x+j-49, y+k-49), color)
 def main():
 	draw_on = False
 	last_pos = (0, 0)
 	color = (255, 128, 0)
-	radius = 1
+	radius = 3
 
 	# running = True
 	screen.fill(colors.background)
@@ -127,11 +127,11 @@ def main():
 	pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
 	counter = 0
 	buttons = [button1,button2,button3,button4,button5,button6]
-	for button in buttons:
-		button.draw()
-	screen.blit(Img, (1060,570))
 	try:
 		while True:
+			screen.blit(Img, (1060,570))
+			for button in buttons:
+				button.draw()
 			e = pygame.event.wait()
 			if e.type == pygame.QUIT:
 				raise StopIteration
@@ -141,7 +141,7 @@ def main():
 					for k in range(-1*radius,radius):
 						if (abs(j+k)<abs(2*radius-1)):
 							graph[e.pos[1]+k][e.pos[0]+j] = 1
-							screen.set_at((e.pos[0]+j, e.pos[1]+k), color)
+							surf.set_at((e.pos[0]+j-49, e.pos[1]+k-49), color)
 				draw_on = True
 			if e.type == pygame.MOUSEBUTTONUP:
 				draw_on = False
@@ -151,10 +151,11 @@ def main():
 						for k in range(-1*radius,radius):
 							if (abs(j+k)<abs(2*radius-1)):
 								graph[e.pos[1]+k][e.pos[0]+j] = 1
-								screen.set_at((e.pos[0]+j, e.pos[1]+k), color)
-					roundline(screen, color, e.pos, last_pos, radius)
+								surf.set_at((e.pos[0]+j-49, e.pos[1]+k-49), color)
+					roundline(surf, color, e.pos, last_pos, radius)
 				last_pos = e.pos
-			pygame.display.flip()
+			
+			pygame.display.update()
 	except StopIteration:
 		pass
 
