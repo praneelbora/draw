@@ -11,3 +11,8 @@ offwhite = (240,240,240)
 background = (92,225,230)
 buttonColor = (3,152,158)
 buttonColorBottom = (0,0,0)
+
+li = [1, 2,3,4, 6]
+li.pop(-1)
+
+print(li)
