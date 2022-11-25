@@ -113,6 +113,13 @@ surf = screen.subsurface((49, 49, 902, 632))
 Img = pygame.image.load('Draw!.png')
 
 graph = [[(255, 255, 255) for i in range(WIDTH)] for j in range(HEIGHT)]
+undo = list()
+undo.append([[(255, 255, 255) for i in range(WIDTH)] for j in range(HEIGHT)])
+for j in range(HEIGHT):
+	for i in range(WIDTH):
+		if undo[-1][j][i] != (255,255,255):
+			print('ok',i,j)
+redo = list()
 
 print(len(graph[0]))
 
@@ -140,9 +147,9 @@ def main():
 	color = (255, 128, 0)
 	radius = 3
 
-	undo = list()
-	undo.append(graph)
-	redo = list()
+	# undo = list()
+	# undo.append(graph)
+	# redo = list()
 
 	# running = True
 	screen.fill(colors.background)
@@ -185,17 +192,32 @@ def main():
 		else:
 			global graph, surf
 			# redo.append(graph)
-			undo.pop(len(undo) - 1)
-			graph = undo[len(undo) - 1]
+			undo.pop()
+			print(len(undo))
+			# undo.pop(-1)
+			# print(len(undo))
+			graph = undo[-1]
+
+			for j in range(HEIGHT):
+				for i in range(WIDTH):
+					if undo[-1][j][i] != (255,255,255):
+						print(i,j)
 
 			for i in range(HEIGHT):
 				for j in range(WIDTH):
 					# if(graph[i][j] != (255, 255, 255)):
-						surf.set_at((j - 49,i - 49), graph[i][j])
+						surf.set_at((j - 49,i - 49), undo[-1][i][j])
 
+			for j in range(HEIGHT):
+				for i in range(WIDTH):
+					if undo[-1][j][i] != (255,255,255):
+						print(i,j)
+
+			# pygame.display.update()
 
 			# undo.pop(-1)
 			# undo.pop(-1)
+			
 
 	def Redo():
 		if (len(redo) == 0): return
@@ -246,8 +268,9 @@ def main():
 
 				draw_on = True
 			if e.type == pygame.MOUSEBUTTONUP:
-				if(draw_on): undo.append(graph)
 				draw_on = False
+				if ((e.pos[1] < 650) and (e.pos[0] < 930)):
+					undo.append(graph.copy())
 			if e.type == pygame.MOUSEMOTION:
 				if draw_on:
 					color = DefaultColour
