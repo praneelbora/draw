@@ -4,89 +4,34 @@ import colors
 pygame.init()
 position = tuple()
 
-# Function to check valid coordinate
-def validCoord(x, y, n, m):
-    if x < 0 or y < 0:
-        return 0
-    if x >= n or y >= m:
-        return 0
-    return 1
- 
-# Function to run bfs
-def bfs(n, m, data, X, Y, color):
-   
-  # Visiting array
-  vis = [[screen.get_at((i,j)) for i in range(n)] for j in range(m)]
-     
-  # Creating queue for bfs
-  obj = []
-     
-  # Pushing pair of {x, y}
-  obj.append([X, Y])
-     
-  # Marking {x, y} as visited
-  vis[X][Y] = 1
-     
-  # Until queue is empty
-  while len(obj) > 0:
+def validCoor(X,Y):
+    if X>0 and Y>0 and X<WIDTH and Y<HEIGHT:
+        return True
+
+def floodfill(X,Y,color):
+    vis = [[0 for i in range(HEIGHT)] for j in range(WIDTH)]
+    obj = []
+    obj.append((X,Y))
+    vis[X][Y] = 1
+
+    while len(obj) > 0:
      
     # Extracting front pair
-    coord = obj[0]
-    x = coord[0]
-    y = coord[1]
-    preColor = data[x][y]
-   
-    data[x][y] = color
-       
-    # Popping front pair of queue
-    obj.pop(0)
-   
-    # For Upside Pixel or Cell
-    if validCoord(x + 1, y, n, m) == 1 and vis[x + 1][y] == 0 and data[x + 1][y] == preColor:
-       obj.append([x + 1, y])
-       vis[x + 1][y] = 1
-       
-    # For Downside Pixel or Cell
-    if validCoord(x - 1, y, n, m) == 1 and vis[x - 1][y] == 0 and data[x - 1][y] == preColor:
-      obj.append([x - 1, y])
-      vis[x - 1][y] = 1
-       
-    # For Right side Pixel or Cell
-    if validCoord(x, y + 1, n, m) == 1 and vis[x][y + 1] == 0 and data[x][y + 1] == preColor:
-      obj.append([x, y + 1])
-      vis[x][y + 1] = 1
-       
-    # For Left side Pixel or Cell
-    if validCoord(x, y - 1, n, m) == 1 and vis[x][y - 1] == 0 and data[x][y - 1] == preColor:
-      obj.append([x, y - 1])
-      vis[x][y - 1] = 1
-  print(preColor)
+        coord = obj[0]
+        x = coord[0]
+        y = coord[1]
+        precolor = screen.get_at((x,y))
+        screen.set_at((x,y), color)
+        # Popping front pair of queue
+        obj.pop(0)
 
-# def flood_recursive(matrix, x, y, start_color, color_to_update):
-# 	width = len(matrix)
-# 	height = len(matrix[0])
-# 	def fill(x,y,start_color,color_to_update):
-# 		#if the square is not the same color as the starting point
-# 		if matrix[x][y] != start_color:
-# 			return
-# 		#if the square is not the new color
-# 		elif matrix[x][y] == color_to_update:
-# 			return
-# 		else:
-# 			#update the color of the current square to the replacement color
-# 			matrix[x][y] = color_to_update
-# 			neighbors = [(x-1,y),(x+1,y),(x-1,y-1),(x+1,y+1),(x-1,y+1),(x+1,y-1),(x,y-1),(x,y+1)]
-# 			for n in neighbors:
-# 				if 0 <= n[0] <= width-1 and 0 <= n[1] <= height-1:
-# 					fill(n[0],n[1],start_color,color_to_update)
-# 	fill(x,y,start_color,color_to_update)
-# 	#pick a random starting point
-# 	# start_x = random.randint(0,width-1)
-# 	# start_y = random.randint(0,height-1)
-# 	# start_color = matrix[start_x][start_y]
-# 	# fill(start_x,start_y,start_color,9)
-# 	return matrix
+        new = [(x-1,y-1),(x,y-1),(x+1,y-1),(x-1,y),(x+1,y),(x-1,y+1),(x,y+1),(x+1,y+1)]
 
+        for i in new:
+            if validCoor(i[0], i[1]) and vis[i[0]][i[1]] == 0 and screen.get_at((i[0],i[1])) == precolor:
+                obj.append((i[0], i[1]))
+                vis[i[0]][i[1]] = 1
+    pygame.display.update()
 
 class Rectangle:
     '''Class for creating rectangles
@@ -212,8 +157,6 @@ def roundline(srf, color, start, end, radius):
 
 
 buttons = [button1, button2, button3, button4, button5, button01, button02, button03, button04, button05]
-for button in buttons:
-    button.draw()
 
 
 last_pos = (0, 0)
@@ -221,6 +164,8 @@ color = (255, 128, 0)
 radius = 6
 
 screen.fill(colors.background)
+for button in buttons:
+    button.draw()
 rectangle1.draw()
 screen.blit(Img, (1060,570))
 
@@ -238,7 +183,7 @@ def Undo():
         print(len(undo))  
         for i in range(HEIGHT):
             for j in range(WIDTH):
-                    screen.set_at((j,i), undo[-1][i][j])        
+                    screen.set_at((j,i), undo[-1][i][j])
         
 
 def Redo():
@@ -308,8 +253,8 @@ def main():
                             if (abs(j+k)<abs(2*radius-1)):
                                 # graph[e.pos[1]+k][e.pos[0]+j] = color
                                 surf.set_at((e.pos[0]+j-49, e.pos[1]+k-49), color)
-                    
-                last_pos1 = e.pos
+                if ((e.pos[0]<930) and (e.pos[1]<650)):   
+                    last_pos1 = e.pos
                 
                 if ((e.pos[1] < 650) and (e.pos[0] < 930) and (drawing==True)):
                     draw_on = True
@@ -323,12 +268,7 @@ def main():
                     roundline(surf, color, e.pos, last_pos1, radius)
                 elif fill:
                     color = DefaultColour
-                    # flood_recursive(graph, last_pos1[0], last_pos1[1], screen.get_at(last_pos1), color)
-                    bfs(WIDTH, HEIGHT, graph, e.pos[0], e.pos[1], color)
-                    print("Done")
-                    for i in range(HEIGHT):
-                        for j in range(WIDTH):
-                                screen.set_at((j,i), graph[i][j])
+                    floodfill(e.pos[0], e.pos[1], color)
 
                 if ((last_pos[1] < 650) and (last_pos[0] < 930) and (last_pos1[0]<650) and (last_pos1[1]<930)):
                     undo.append([[screen.get_at((i,j)) for i in range(WIDTH)] for j in range(HEIGHT)])
@@ -336,9 +276,6 @@ def main():
                         redo.remove(redo[i])
                     print(len(redo))
                 
-
-                if not fill:
-                    graph = [[screen.get_at((i,j)) for i in range(WIDTH)] for j in range(HEIGHT)]
                             
                 draw_on = False
                 fill = False
