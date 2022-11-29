@@ -1,12 +1,7 @@
 import pygame,sys
 import colors
 import copy
-# import ujson, json
-# wfile = open("JsonExample.json", "r+")
-#rfile = open("JsonExample.json", "r")
-# t = ujson.dumps(graph)
-# print(t)
-# '''
+
 pygame.init()
 
 position = tuple()
@@ -111,7 +106,8 @@ class Rectangle:
 
 
 class Button:
-    def __init__(self,text,width,height,pos,elevation):
+    # top_color=(3,152,158)
+    def __init__(self,text,width,height,pos,elevation,colour):
         #Core attributes 
         self.pressed = False
         self.elevation = elevation
@@ -120,7 +116,7 @@ class Button:
 
         # top rectangle 
         self.top_rect = pygame.Rect(pos,(width,height))
-        self.top_color =  (3,152,158)
+        self.top_color =  colour
 
         # bottom rectangle 
         self.bottom_rect = pygame.Rect(pos,(width,height))
@@ -155,7 +151,7 @@ class Button:
     def check_click(self):
         mouse_pos = pygame.mouse.get_pos()
         if self.top_rect.collidepoint(mouse_pos):
-            self.top_color =  (3,152,158)
+            # self.top_color =  (3,152,158)
             if pygame.mouse.get_pressed()[0]:
                 self.dynamic_elecation = 0
                 self.pressed = True
@@ -167,7 +163,7 @@ class Button:
                     return True
         else:
             self.dynamic_elecation = self.elevation
-            self.top_color =  (3,152,158)
+            # self.top_color =  (3,152,158)
             return False
 # '''
 WIDTH, HEIGHT = 1280,720
@@ -182,19 +178,25 @@ gui_font = pygame.font.SysFont('rockwell',30)
 counter = 0
 
 #buttons
-button1 = Button('Fill',220,60,(1000,70),5)
-button2 = Button('Select Colour',220,60,(1000,170),5)
-button3 = Button('Straight Line',220,60,(1000,270),5)
-button4 = Button('Draw',220,60,(1000,370),5)
-button5 = Button('Undo',100,60,(1000,470),5)
-button6 = Button('Redo',100,60,(1120,470),5)
+button1 = Button('Fill',220,60,(1000,70),5,(3,152,158))
+button2 = Button('Select Colour',220,60,(1000,170),5,(3,152,158))
+button3 = Button('Straight Line',220,60,(1000,270),5,(3,152,158))
+button4 = Button('Draw',220,60,(1000,370),5,(3,152,158))
+button5 = Button('Undo',100,60,(1000,470),5,(3,152,158))
+button6 = Button('Redo',100,60,(1120,470),5,(3,152,158))
+button01 = Button('',42,42,(1002,179),5,(0, 0, 0))   #Black
+button02 = Button('',42,42,(1048,179),5,(0, 0, 255))   #Blue
+button03 = Button('',42,42,(1094,179),5,(255, 0, 0))   #Red
+button04 = Button('',42,42,(1140,179),5,(255, 0, 100))   #Orange
+button05 = Button('',42,42,(1186,179),5,(255, 255, 255))   #White / Erazer
+
 
 #color selections
-colour1 = Button('Black',220,60,(1000,70),5)
-colour2 = Button('Blue',220,60,(1000,170),5)
-colour3 = Button('Red',220,60,(1000,270),5)
-colour4 = Button('Orange',220,60,(1000,370),5)
-colour5 = Button('Eraser',220,60,(1000,470),5)
+# colour1 = Button('Black',220,60,(1000,70),5)
+# colour2 = Button('Blue',220,60,(1000,170),5)
+# colour3 = Button('Red',220,60,(1000,270),5)
+# colour4 = Button('Orange',220,60,(1000,370),5)
+# colour5 = Button('Eraser',220,60,(1000,470),5)
 
 #rectangles
 rectangle1 = Rectangle(900, 630, (50, 50), colors.white)
@@ -221,10 +223,102 @@ def roundline(srf, color, start, end, radius):
                     srf.set_at((x+j-49, y+k-49), color)
 
 
-buttons = [button1, button2, button3, button4, button5, button6]
-colours = [colour1, colour2, colour3, colour4, colour5]
-    
+buttons = [button1, button3, button4, button5, button6, button01, button02, button03, button04, button05]
+for button in buttons:
+    button.draw()
+
+# colours = [colour1, colour2, colour3, colour4, colour5]
+
+
+last_pos = (0, 0)
+color = (255, 128, 0)
+radius = 3
+
+screen.fill(colors.background)
+rectangle1.draw()
+screen.blit(Img, (1060,570))
+
+undo = list()
+undo.append([[screen.get_at((i,j)) for i in range(WIDTH)] for j in range(HEIGHT)])
+redo = list()
+
+# def setColour():
+
+#     pygame.display.update()
+
+#     for col in colours:
+#         col.draw()
+
+#     a = dict()
+#     a['Black'] = (0, 0, 0)
+#     a['Blue'] = (0, 0, 255)
+#     a['Red'] = (255, 0, 0)
+#     a['Orange'] = (255, 0, 100)
+#     a['Eraser'] = (255, 255, 255)
+
+#     while True:
+#         screen.blit(Img, (1060,570))
+
+#         for col in colours:
+#             if(col.checking()):
+#                 return a[col.text]
+
+#         pygame.display.update()
+
+
+def Undo():
+    # global DefaultColour
+    # print(DefaultColour)
+    print(len(undo))
+    if(len(undo) <= 1):
+        # for j in range(650):
+        # 	for i in range(902):
+        # 		surf.set_at((i,j), (255,255,255))
+        return
+        # screen.fill(92,225,230)
+    else:
+        # global graph, surf
+        # redo.append(graph)
+        redo.append(undo.pop())
+        print(len(undo))
+        # undo.pop(-1)
+        # print(len(undo))
+        # graph = undo[-1]
+
+        # for j in range(HEIGHT):
+        # 	for i in range(WIDTH):
+        # 		if undo[-1][j][i] != (255,255,255):
+        # 			print(i,j)
+
+        for i in range(HEIGHT):
+            for j in range(WIDTH):
+                # if(graph[i][j] != (255, 255, 255)):
+                    screen.set_at((j,i), undo[-1][i][j])
+
+        # for j in range(HEIGHT):
+        # 	for i in range(WIDTH):
+        # 		if undo[-1][j][i] != (255,255,255):
+        # 			print(i,j)
+
+        # pygame.display.update()
+
+        # undo.pop(-1)
+        # undo.pop(-1)
+        
+
+def Redo():
+    if (len(redo) == 0): return
+    else:
+        undo.append(redo.pop())
+        # print(len(redo))
+
+        for i in range(HEIGHT):
+            for j in range(WIDTH):
+                # if(graph[i][j] != (255, 255, 255)):
+                    screen.set_at((j,i), undo[-1][i][j])
+
 def main():
+    
     DefaultColour = BLACK
     drawing = True
     draw_on = False
@@ -232,107 +326,15 @@ def main():
     filling = False
     lining = False
     line = False
-    last_pos = (0, 0)
-    color = (255, 128, 0)
-    radius = 3
+    
 
-    # undo = list()
-    # undo.append(graph)
-    # redo = list()
+    
 
-    # running = True
-    screen.fill(colors.background)
-    rectangle1.draw()
-    screen.blit(Img, (1060,570))
-
-    for button in buttons:
-        button.draw()
-    undo = list()
-    undo.append([[screen.get_at((i,j)) for i in range(WIDTH)] for j in range(HEIGHT)])
-    # for j in range(HEIGHT):
-    # 	for i in range(WIDTH):
-    # 		if undo[-1][j][i] != (255,255,255):
-    # 			print('ok',i,j)
-    redo = list()
-    # drawing = False
     thickness = 10
     pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
     counter = 0
 
-    def setColour():
 
-        pygame.display.update()
-
-        for col in colours:
-            col.draw()
-
-        a = dict()
-        a['Black'] = (0, 0, 0)
-        a['Blue'] = (0, 0, 255)
-        a['Red'] = (255, 0, 0)
-        a['Orange'] = (255, 0, 100)
-        a['Eraser'] = (255, 255, 255)
-
-        while True:
-            screen.blit(Img, (1060,570))
-
-            for col in colours:
-                if(col.checking()):
-                    return a[col.text]
-
-            pygame.display.update()
-
-    
-    def Undo():
-        # global DefaultColour
-        # print(DefaultColour)
-        print(len(undo))
-        if(len(undo) <= 1):
-            # for j in range(650):
-            # 	for i in range(902):
-            # 		surf.set_at((i,j), (255,255,255))
-            return
-            # screen.fill(92,225,230)
-        else:
-            # global graph, surf
-            # redo.append(graph)
-            redo.append(undo.pop())
-            print(len(undo))
-            # undo.pop(-1)
-            # print(len(undo))
-            # graph = undo[-1]
-
-            # for j in range(HEIGHT):
-            # 	for i in range(WIDTH):
-            # 		if undo[-1][j][i] != (255,255,255):
-            # 			print(i,j)
-
-            for i in range(HEIGHT):
-                for j in range(WIDTH):
-                    # if(graph[i][j] != (255, 255, 255)):
-                        screen.set_at((j,i), undo[-1][i][j])
-
-            # for j in range(HEIGHT):
-            # 	for i in range(WIDTH):
-            # 		if undo[-1][j][i] != (255,255,255):
-            # 			print(i,j)
-
-            # pygame.display.update()
-
-            # undo.pop(-1)
-            # undo.pop(-1)
-            
-
-    def Redo():
-        if (len(redo) == 0): return
-        else:
-            undo.append(redo.pop())
-            # print(len(redo))
-
-            for i in range(HEIGHT):
-                for j in range(WIDTH):
-                    # if(graph[i][j] != (255, 255, 255)):
-                        screen.set_at((j,i), undo[-1][i][j])
 
     try:
         while True:
@@ -347,30 +349,30 @@ def main():
                 filling = True
                 pass
             
-            if buttons[1].checking():
-                for col in colours:
-                    col.draw()
-                clock.tick(10000)
-                DefaultColour = setColour()
+            # if buttons[1].checking():
+            #     for col in colours:
+            #         col.draw()
+            #     clock.tick(10000)
+            #     DefaultColour = setColour()
 
-            if buttons[2].checking():
+            if buttons[1].checking():
                 drawing = False
                 filling = False
                 lining = True
                 pass
 
-            if buttons[3].checking():
+            if buttons[2].checking():
                 filling = False
                 lining = False
                 drawing = True
                 pass
 
-            if buttons[4].checking():
+            if buttons[3].checking():
                 print(DefaultColour)
                 Undo()
                 pass
 
-            if buttons[5].checking():
+            if buttons[4].checking():
                 Redo()
                 pass
 
@@ -446,27 +448,10 @@ def main():
 
 
 
-        # pygame.display.update()
+
     pygame.image.save(surf,"surface.png")
-    # for j in range(HEIGHT):
-    # 	for i in range(WIDTH):
-    # 		if graph[j][i] == 1:
-    # 			print(i,j)
+
     pygame.quit()
 
 main()
 
-'''Button operation to be added afterwards'''
-# if button1.checking():
-# 	print("button1")
-# 	if draw_button==0 and drawing==False:
-# 		print("draw=0")
-# 		draw_button=1
-# 		drawing=True
-# 	elif draw_button==1 and drawing==True:
-# 		print("draw=1")
-# 		draw_button=0
-# 		drawing=False
-# 		counter=0
-# elif draw_button==1:
-# 	drawing = True

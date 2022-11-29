@@ -1,4 +1,5 @@
-for j in range(HEIGHT):
-	# 	for i in range(WIDTH):
-	# 		if graph[j][i] == 1:
-	# 			print(i,j)
+f buttons[1].checking():
+            #     for col in colours:
+            #         col.draw()
+            #     clock.tick(10000)
+            #     DefaultColour = setColour()
