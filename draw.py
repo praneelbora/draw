@@ -1,9 +1,7 @@
 import pygame,sys
 import colors
-import copy
 
 pygame.init()
-
 position = tuple()
 
 # Function to check valid coordinate
@@ -62,7 +60,6 @@ def bfs(n, m, data, X, Y, color):
     if validCoord(x, y - 1, n, m) == 1 and vis[x][y - 1] == 0 and data[x][y - 1] == preColor:
       obj.append([x, y - 1])
       vis[x][y - 1] = 1
-
   print(preColor)
 
 # def flood_recursive(matrix, x, y, start_color, color_to_update):
@@ -103,7 +100,6 @@ class Rectangle:
         '''draw function of class button'''
         # pygame.draw.rect(screen,self.top_color,self.top_rect,border_radius = 20)
         pygame.draw.rect(screen,self.top_color,self.top_rect,border_radius= 0)
-
 
 class Button:
     # top_color=(3,152,158)
@@ -190,8 +186,6 @@ button04 = Button('',42,42,(1140,179),5,(255, 0, 100))   #Orange
 button05 = Button('',42,42,(1186,179),5,(255, 255, 255))   #White / Erazer
 
 
-
-
 #rectangles
 rectangle1 = Rectangle(900, 630, (50, 50), colors.white)
 # surf = pygame.Surface(900, 630)
@@ -222,7 +216,6 @@ for button in buttons:
     button.draw()
 
 
-
 last_pos = (0, 0)
 color = (255, 128, 0)
 radius = 6
@@ -236,35 +229,28 @@ undo.append([[screen.get_at((i,j)) for i in range(WIDTH)] for j in range(HEIGHT)
 redo = list()
 
 
-def Undo():
-    
+def Undo():  
     print(len(undo))
     if(len(undo) <= 1):
         return
-    else:
-        
+    else:  
         redo.append(undo.pop())
-        print(len(undo))
-        
+        print(len(undo))  
         for i in range(HEIGHT):
             for j in range(WIDTH):
-                    screen.set_at((j,i), undo[-1][i][j])
-
-        
+                    screen.set_at((j,i), undo[-1][i][j])        
         
 
 def Redo():
     if (len(redo) == 0): return
     else:
         undo.append(redo.pop())
-
         for i in range(HEIGHT):
             for j in range(WIDTH):
                 # if(graph[i][j] != (255, 255, 255)):
                     screen.set_at((j,i), undo[-1][i][j])
 
 def main():
-    
     DefaultColour = BLACK
     drawing = True
     draw_on = False
@@ -273,46 +259,32 @@ def main():
     lining = False
     line = False
     
-
     thickness = 10
     pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
     counter = 0
 
-
     try:
         while True:
             screen.blit(Img, (1060,570))
-
             for button in buttons:
                 button.draw()
-
             if buttons[0].checking():
                 drawing = False
                 lining = False
                 filling = True
-                pass
-
             if buttons[1].checking():
                 drawing = False
                 filling = False
                 lining = True
-                pass
-
             if buttons[2].checking():
                 filling = False
                 lining = False
                 drawing = True
-                pass
-
             if buttons[3].checking():
                 print(DefaultColour)
                 Undo()
-                pass
-
             if buttons[4].checking():
                 Redo()
-                pass
-
             if buttons[5].checking():
                 DefaultColour=buttons[5].top_color
             if buttons[6].checking():
@@ -324,13 +296,10 @@ def main():
             if buttons[9].checking():
                 DefaultColour=buttons[9].top_color
 
-
             e = pygame.event.wait()
-
 
             if e.type == pygame.QUIT:
                 raise StopIteration
-                
             if e.type == pygame.MOUSEBUTTONDOWN:
                 if draw_on:
                     color = DefaultColour
@@ -388,16 +357,10 @@ def main():
             
             pygame.display.update()
 
-            # print(len(undo))
-
     except StopIteration:
         pass
 
-
-
-
     pygame.image.save(surf,"surface.png")
-
     pygame.quit()
 
 main()
