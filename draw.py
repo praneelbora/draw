@@ -1,7 +1,7 @@
 import pygame,sys
 import colors
 import copy
-import ujson, json
+# import ujson, json
 # wfile = open("JsonExample.json", "r+")
 #rfile = open("JsonExample.json", "r")
 # t = ujson.dumps(graph)
@@ -50,8 +50,8 @@ def bfs(n, m, data, X, Y, color):
    
     # For Upside Pixel or Cell
     if validCoord(x + 1, y, n, m) == 1 and vis[x + 1][y] == 0 and data[x + 1][y] == preColor:
-      obj.append([x + 1, y])
-      vis[x + 1][y] = 1
+       obj.append([x + 1, y])
+       vis[x + 1][y] = 1
        
     # For Downside Pixel or Cell
     if validCoord(x - 1, y, n, m) == 1 and vis[x - 1][y] == 0 and data[x - 1][y] == preColor:
@@ -327,7 +327,7 @@ def main():
         if (len(redo) == 0): return
         else:
             undo.append(redo.pop())
-            print(len(redo))
+            # print(len(redo))
 
             for i in range(HEIGHT):
                 for j in range(WIDTH):
@@ -390,8 +390,7 @@ def main():
                             if (abs(j+k)<abs(2*radius-1)):
                                 # graph[e.pos[1]+k][e.pos[0]+j] = color
                                 surf.set_at((e.pos[0]+j-49, e.pos[1]+k-49), color)
-                    for i in redo:
-                        redo.remove(i)
+                    
                 last_pos1 = e.pos
                 
                 if ((e.pos[1] < 650) and (e.pos[0] < 930) and (drawing==True)):
@@ -415,6 +414,9 @@ def main():
 
                 if ((last_pos[1] < 650) and (last_pos[0] < 930) and (last_pos1[0]<650) and (last_pos1[1]<930)):
                     undo.append([[screen.get_at((i,j)) for i in range(WIDTH)] for j in range(HEIGHT)])
+                    for i in range(len(redo)):
+                        redo.remove(redo[i])
+                    print(len(redo))
                 
 
                 if not fill:
